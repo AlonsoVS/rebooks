@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+flask = "*"
+marshmallow = "*"
+sqlalchemy = "*"
+flask-sqlalchemy = "*"
+flask-marshmallow = "*"
+marshmallow-sqlalchemy = "*"
+mysqlclient = "*"
+
+[dev-packages]
+
+[scripts]
+dev = "bash run_dev.sh"
+
+[requires]
+python_version = "3.8"
