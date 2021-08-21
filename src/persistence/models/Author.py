@@ -1,7 +1,7 @@
 from marshmallow import fields, post_load
-from src.persistence.db import db, BaseModel, ma
+from src.persistence.db import Base, db, BaseModel, ma
 
-class Author(db.Model, BaseModel):
+class Author(db.Model, Base, BaseModel):
   id = db.Column(db.Integer, primary_key=True)
   name = db.Column(db.String(300))
   

@@ -1,9 +1,12 @@
+from sqlalchemy.ext.declarative import declarative_base
 from app import db as app_db, ma as marshmallow
 
 db = app_db
 ma = marshmallow
+Base = declarative_base()
 
 class BaseModel:
+    __table_args__ = {'extend_existing': True}
     def save(self):
         db.session.add(self)
         db.session.commit()
