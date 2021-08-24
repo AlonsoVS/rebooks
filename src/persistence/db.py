@@ -1,9 +1,11 @@
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.sql.schema import MetaData
 from app import db as app_db, ma as marshmallow
 
 db = app_db
 ma = marshmallow
 Base = declarative_base()
+meta = MetaData()
 
 class BaseModel:
     __table_args__ = {'extend_existing': True}
@@ -15,10 +17,10 @@ class BaseModel:
         db.session.commit()
     @classmethod
     def get_all(cls):
-        return cls.query.all()
+        return db.session.query(cls).all()
     @classmethod
     def get_by_id(cls, id):
-        return cls.query.get(id)
+        return db.session.query(cls).get(id)
     @classmethod
     def simple_filter(cls, **kwargs):
-        return cls.query.filter_by(**kwargs).all()
+        return db.session.query(cls).filter_by(**kwargs).all()

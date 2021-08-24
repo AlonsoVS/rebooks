@@ -31,7 +31,8 @@ def add_book():
               cover=new_book.cover,
               abstract=new_book.abstract,
               publication_date=new_book.publication_date,
-              reviews=new_book.reviews
+              reviews=new_book.reviews,
+              authors=new_book.authors
               )
   book.save()
   response = book_schema.dump(book)
@@ -75,7 +76,7 @@ def get_authors():
 def add_author():
   data = request.get_json()
   new_author:Author = author_schema.load(data)
-  author = Author(name=new_author.name)
+  author = Author(name=new_author.name, books=new_author.books)
   author.save()
   response = author_schema.dump(author)
   return jsonify(response), 201
