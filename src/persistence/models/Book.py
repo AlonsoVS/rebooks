@@ -15,15 +15,15 @@ books_authors_association = Table(
 class Book(Base, BaseModel):
   __tablename__ = 'books'
   id = db.Column(db.Integer, primary_key=True)
-  name = db.Column(db.String(300))
-  cover = db.Column(db.String(200))
-  abstract = db.Column(db.String(600))
+  name = db.Column(db.String())
+  cover = db.Column(db.String())
+  abstract = db.Column(db.String())
   publication_date = db.Column(db.Date)
-  reviews = db.relationship('Review', cascade='all, delete-orphan')
+  reviews = db.relationship('Review', cascade='all, delete-orphan', back_populates='book')
   authors = db.relationship('Author', secondary='books_authors')
 
   def __init__(self, 
-                name:str, 
+                name:str,
                 cover:str='', 
                 abstract:str='',
                 publication_date:date=None, 
@@ -41,13 +41,13 @@ class Book(Base, BaseModel):
     return f'Book:{self.__dict__}'
 
 class BookSchema(ma.Schema):
-  id = fields.Integer(dump_only=True)
+  id = fields.Integer()
   name = fields.String()
   cover = fields.String()
   abstract = fields.String()
   publication_date = fields.Date()
-  reviews = fields.Nested('ReviewSchema', many=True)
-  authors = fields.Nested("AuthorSchema", only=("name","id"), many=True)
+  reviews = fields.Nested('ReviewSchema', only=("id", "content", "publication_date"), many=True)
+  authors = fields.Nested('AuthorSchema', only=("name","id"), many=True)
 
 
   @post_load
