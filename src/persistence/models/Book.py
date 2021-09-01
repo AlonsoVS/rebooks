@@ -49,7 +49,6 @@ class BookSchema(ma.Schema):
   reviews = fields.Nested('ReviewSchema', only=("id", "content", "publication_date"), many=True)
   authors = fields.Nested('AuthorSchema', only=("name","id"), many=True)
 
-
   @post_load
   def make_book(self, data, **kwargs):
     return Book(**data)

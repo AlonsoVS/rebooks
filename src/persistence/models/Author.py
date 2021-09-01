@@ -1,6 +1,5 @@
 from typing import List
 from marshmallow import fields, post_load
-from sqlalchemy.orm import validates
 from src.persistence.db import Base, db, BaseModel, ma
 
 class Author(Base, BaseModel):

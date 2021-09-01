@@ -1,6 +1,5 @@
 from datetime import date
 from marshmallow import fields, post_load
-from marshmallow.utils import pluck
 from src.persistence.db import db, BaseModel, ma, Base
 
 class Review(Base, BaseModel):
