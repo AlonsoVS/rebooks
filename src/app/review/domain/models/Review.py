@@ -1,6 +1,6 @@
 from datetime import date
 from marshmallow import fields, post_load
-from src.persistence.db import db, BaseModel, ma, Base
+from src.app.shared.domain.database.db import db, BaseModel, ma, Base
 
 class Review(Base, BaseModel):
   __tablename__ = 'reviews'

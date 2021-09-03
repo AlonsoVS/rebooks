@@ -1,9 +1,9 @@
 from datetime import date
-from src.persistence.models.Author import Author
-from src.persistence.models.Review import Review
+from src.app.author.domain.models.Author import Author
+from src.app.review.domain.models.Review import Review
 from typing import List
 from marshmallow import fields, post_load
-from src.persistence.db import db, BaseModel, ma, Base
+from src.app.shared.domain.database.db import db, BaseModel, ma, Base
 from  sqlalchemy import Column, Table
 
 books_authors_association = Table(

@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.schema import MetaData
-from app import db as app_db, ma as marshmallow
+from src.app.app import db as app_db, ma as marshmallow
 
 db = app_db
 ma = marshmallow

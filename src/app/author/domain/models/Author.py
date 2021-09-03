@@ -1,6 +1,6 @@
 from typing import List
 from marshmallow import fields, post_load
-from src.persistence.db import Base, db, BaseModel, ma
+from src.app.shared.domain.database.db import Base, db, BaseModel, ma
 
 class Author(Base, BaseModel):
   __tablename__ = 'authors'

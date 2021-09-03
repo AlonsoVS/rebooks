@@ -3,7 +3,7 @@ from src.app.book.infrastructure.controller.BookController import book_controlle
 from src.app.author.infrastructure.controller.AuthorController import author_controller
 from src.app.review.infrastructure.controller.ReviewController import review_controller
 
-from app import create_app
+from src.app.app import create_app
 from flask_restful import Api
 import os
 
