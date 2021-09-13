@@ -2,8 +2,7 @@ from datetime import date
 from src.app.author.domain.models.Author import Author
 from src.app.review.domain.models.Review import Review
 from typing import List
-from marshmallow import fields, post_load
-from src.app.shared.domain.database.db import db, BaseModel, ma, Base
+from src.app.shared.domain.database.db import db, BaseModel, Base
 from  sqlalchemy import Column, Table
 
 books_authors_association = Table(
@@ -39,16 +38,3 @@ class Book(Base, BaseModel):
   
   def __repr__(self):
     return f'Book:{self.__dict__}'
-
-class BookSchema(ma.Schema):
-  id = fields.Integer()
-  name = fields.String()
-  cover = fields.String()
-  abstract = fields.String()
-  publication_date = fields.Date()
-  reviews = fields.Nested('ReviewSchema', only=("id", "content", "publication_date"), many=True)
-  authors = fields.Nested('AuthorSchema', only=("name","id"), many=True)
-
-  @post_load
-  def make_book(self, data, **kwargs):
-    return Book(**data)

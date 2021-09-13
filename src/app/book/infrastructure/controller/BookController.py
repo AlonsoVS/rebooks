@@ -1,76 +1,53 @@
-from src.app.author.domain.models.Author import Author
-from src.app.review.domain.models.Review import Review
-from src.app.book.domain.models.Book import Book, BookSchema
+from src.app.book.application.UpdateBookService import UpdateBookService
+from src.app.book.application.CreateBookService import CreateBookService
+from src.app.book.application.DeleteBookService import DeleteBookService
+from src.app.book.application.GetBooksService import GetBooksService
+from src.app.book.domain.Book import Book, BookSchema
 from flask_restful import Api
 from flask import Blueprint
 from flask_restful import Resource
-from flask import  request
+from flask import request
 
 book_schema = BookSchema()
+get_books_service = GetBooksService()
+delete_book_service = DeleteBookService()
+create_book_service = CreateBookService()
+update_book_service = UpdateBookService()
 
 class BookResources(Resource):
   def get(self, book_id:int):
-    result = Book.get_by_id(book_id)
-    if result is not None:
-      book = book_schema.dump(result)
-      return book, 200
-    return 'Book not found', 404
+    result = get_books_service.find_by_id(book_id).get_book()
+    if result is None:
+      return 'Book not found', 404
+    return result, 200
   
   def put(self, book_id:int):
-    updated_book = request.get_json()
-    if book_id is not None:
-      book_found:Book = Book.get_by_id(book_id)
-      if book_found is not None:
-        for key in updated_book.keys():
-          try:
-            setattr(book_found, key, updated_book[key])
-          except:
-            return f'The {key} property cannot be modified', 400
-      else:
-        return 'Book not found', 404
-      book_found.save()
-      response = book_schema.dump(book_found)
-      return response, 200
-    return 'You should provide a book id', 400
-  
+    update_data = request.get_json()
+    update_response = update_book_service.update(book_id, update_data)
+    book_updated = update_response.updated()
+    if book_updated:
+      return book_updated
+    return f'Error: Could not update the book with id: {book_id}'
+    
   def delete(self, book_id:int):
-    book = Book.get_by_id(book_id)
-    if book is not None:
-      book.delete()
-      return 'Book deleted', 200
+    delete_response = delete_book_service.delete(book_id)
+    if (delete_response.is_deleted()):
+      return f'Deleted book with id: {delete_response.deleted_id()}', 200
     return 'Book not found', 404
 
 class BookListResources(Resource):
   def get(self):
-    result = Book.get_all()
-    books = BookSchema().dump(result, many=True)
-    return books, 200
+    response = get_books_service.get_all()
+    return response.get_books(), 200
   
   def post(self):
     data = request.get_json()
     new_book:Book = book_schema.load(data)
-    book = Book(name=new_book.name,
-                cover=new_book.cover,
-                abstract=new_book.abstract,
-                publication_date=new_book.publication_date,
-                reviews=new_book.reviews)
-
-    for author in new_book.authors:
-      if author.id is None:
-        book.authors.append(Author(author.name))
-      else:
-        author_found = author.get_by_id(author.id)
-        if (author_found is not None):
-          book.authors.append(author_found)
-        else:
-          return f'Author with id: {author.id} not found', 404
-    
-    for review in new_book.reviews:
-      book.reviews.append(Review(content=review.content, 
-                                publication_date=review.publication_date))
-    book.save()
-    response = book_schema.dump(book)
-    return response, 201
+    create_response = create_book_service.create(new_book)
+    book_created = create_response.created()
+    if book_created:
+      return book_created, 201
+    return f'Error: Could not create the book', 400
 
 book_controller = Blueprint('books', __name__)
 api = Api(book_controller)
