@@ -1,6 +1,5 @@
 from datetime import date
-from marshmallow import fields, post_load
-from src.app.shared.domain.database.db import db, BaseModel, ma, Base
+from src.app.shared.domain.database.db import db, BaseModel, Base
 
 class Review(Base, BaseModel):
   __tablename__ = 'reviews'
@@ -17,14 +16,3 @@ class Review(Base, BaseModel):
   
   def __repr__(self):
     return f'Review:{self.__dict__}'
- 
-class ReviewSchema(ma.Schema):
-  id = fields.Integer()
-  content = fields.String()
-  book_id = fields.Integer()
-  publication_date = fields.Date()
-  book = fields.Pluck('BookSchema', "name")
-
-  @post_load
-  def make_review(self, data, **kwargs):
-    return Review(**data)
