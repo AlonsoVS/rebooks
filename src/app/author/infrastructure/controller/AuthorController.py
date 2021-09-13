@@ -1,56 +1,53 @@
-from src.app.author.domain.models.Author import Author, AuthorSchema
+from src.app.author.application.DeleteAuthorService import DeleteAuthorService
+from src.app.author.application.UpdateAuthorService import UpdateAuthorService
+from src.app.author.application.CreateBookService import CreateAuthorService
+from src.app.author.application.GetAuthorsService import GetAuthorsService
+from src.app.author.domain.Author import Author, AuthorSchema
 from flask_restful import Api
 from flask import Blueprint
 from flask_restful import Resource
 from flask import  request
 
 author_schema = AuthorSchema()
+get_books_service = GetAuthorsService()
+create_author_service = CreateAuthorService()
+update_author_service = UpdateAuthorService()
+delete_author_service = DeleteAuthorService()
 
 class AuthorResources(Resource):
   def get(self, author_id:int):
-    result = Author.get_by_id(author_id)
-    if result is not None:
-      author = author_schema.dump(result)
-      return author, 200
-    return 'Author not found', 404
+    result = get_books_service.find_by_id(author_id).get_author();
+    if result is None:
+      return 'Author not found', 404
+    return result, 200
   
   def put(self, author_id:int):
-    updated_author = request.get_json()
-    if author_id is not None:
-      author_found:Author = Author.get_by_id(author_id)
-      if author_found is not None:
-        for key in updated_author.keys():
-          try:
-            setattr(author_found, key, updated_author[key])
-          except:
-            return f'The {key} property cannot be modified'
-      else:
-        return 'Author not found', 404
-      author_found.save()
-      response = author_schema.dump(author_found)
-      return response, 200
-    return 'You should provide an author id', 400
+    update_data = request.get_json()
+    update_response = update_author_service.update(author_id, update_data)
+    author_updated = update_response.updated()
+    if author_updated:
+      return author_updated, 200
+    return f'Error: Could not update the author with id: {author_id}', 400
   
   def delete(self, author_id:int):
-    author = Author.get_by_id(author_id)
-    if author is not None:
-      author.delete()
-      return 'Author deleted', 200
+    delete_response = delete_author_service.delete(author_id)
+    if (delete_response.is_deleted()):
+      return f'Deleted author with id: {delete_response.deleted_id()}', 200
     return 'Author not found', 404
 
 class AuthorListResources(Resource):
   def get(self):
-    authors = Author.get_all()
-    result = author_schema.dump(authors, many=True)
-    return result, 200
+    response = get_books_service.get_all()
+    return response.get_authors(), 200
   
   def post(self):
     data = request.get_json()
     new_author:Author = author_schema.load(data)
-    author = Author(name=new_author.name)
-    author.save()
-    response = author_schema.dump(author)
-    return response, 201
+    create_response = create_author_service.create(new_author)
+    author_created = create_response.created()
+    if author_created:
+      return author_created, 201
+    return f'Error: Could not create the author', 400
 
 author_controller = Blueprint('authors', __name__)
 api = Api(author_controller)

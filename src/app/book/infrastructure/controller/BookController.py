@@ -26,8 +26,8 @@ class BookResources(Resource):
     update_response = update_book_service.update(book_id, update_data)
     book_updated = update_response.updated()
     if book_updated:
-      return book_updated
-    return f'Error: Could not update the book with id: {book_id}'
+      return book_updated, 200
+    return f'Error: Could not update the book with id: {book_id}', 400
     
   def delete(self, book_id:int):
     delete_response = delete_book_service.delete(book_id)

@@ -8,7 +8,7 @@ class CreateBookService():
   def __init__(self):
     return
   
-  def create(self, new_book:Book):
+  def create(self, new_book:Book) -> CreateBookResponse:
     book = BookModel(name=new_book.name,
                       cover=new_book.cover,
                       abstract=new_book.abstract,

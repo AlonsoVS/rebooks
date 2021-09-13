@@ -1,6 +1,5 @@
 from typing import List
-from marshmallow import fields, post_load
-from src.app.shared.domain.database.db import Base, db, BaseModel, ma
+from src.app.shared.domain.database.db import Base, db, BaseModel
 
 class Author(Base, BaseModel):
   __tablename__ = 'authors'
@@ -15,12 +14,3 @@ class Author(Base, BaseModel):
   
   def __repr__(self):
     return f'Author:{self.__dict__}'
- 
-class AuthorSchema(ma.Schema):
-  id = fields.Integer()
-  name = fields.String()
-  books = fields.Nested('BookSchema', only=('id', 'name'), many=True)
-
-  @post_load
-  def set_author(self, data, **kwargs):
-    return Author(**data)
