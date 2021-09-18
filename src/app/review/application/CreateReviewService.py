@@ -1,14 +1,10 @@
 from src.app.review.application.CreateReviewResponse import CreateReviewResponse
-from src.app.review.domain.models.Review import Review as ReviewModel
 from src.app.review.domain.Review import Review
+from src.app.review.domain.IReviewRepository import IReviewRepository
 
 class CreateReviewService():
-  def __init__(self):
-    return
+  def __init__(self, repository:IReviewRepository):
+    self.repository = repository
   
   def create(self, new_review:Review) -> CreateReviewResponse:
-    review = ReviewModel(content=new_review.content,
-                        publication_date=new_review.publication_date,
-                        book_id=new_review.book_id)
-    review.save()
-    return CreateReviewResponse(review)
+    return CreateReviewResponse(self.repository.save(new_review))

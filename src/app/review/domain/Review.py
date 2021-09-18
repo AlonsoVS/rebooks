@@ -10,7 +10,8 @@ class Review():
   book_id:int = None
   book:Book = None
   
-  def __init__(self, content:str, book_id:int=None, publication_date:date=None):
+  def __init__(self, content:str, id:int=None, book_id:int=None, publication_date:date=None):
+    self.id = id
     self.content = content
     self.publication_date = publication_date
     self.book_id = book_id

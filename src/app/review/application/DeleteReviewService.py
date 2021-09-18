@@ -1,13 +1,13 @@
+from src.app.review.domain.IReviewRepository import IReviewRepository
 from src.app.review.application.DeleteReviewResponse import DeleteReviewResponse
-from src.app.review.domain.models.Review import Review
 
 class DeleteReviewService():
-  def __init__(self):
-    return
+  def __init__(self, repository:IReviewRepository):
+    self.repository = repository
   
   def delete(self, id:int) -> DeleteReviewResponse:
-    review_found = Review.get_by_id(id)
+    review_found = self.repository.get(id)
     if (review_found is None):
       return DeleteReviewResponse(id, False)
-    review_found.delete()
+    self.repository.delete(id)
     return DeleteReviewResponse(id, True)
