@@ -6,7 +6,7 @@ from src.app.review.domain.Review import Review, ReviewSchema
 from flask_restful import Api
 from flask import Blueprint
 from flask_restful import Resource
-from flask import  request
+from flask import request
 from src.app.review.infrastructure.persistence.ReviewRepository import ReviewRepository
 
 review_repository = ReviewRepository()

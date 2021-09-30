@@ -13,6 +13,7 @@ def create_app(settings_module):
   app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
   app.config['SHOW_SQLALCHEMY_LOG_MESSAGES'] = False
   app.config['PROPAGATE_EXCEPTIONS'] = True
+  app.config['SECRET_KEY'] = 'My-custom-api-key'
   app.url_map.strict_slashes = False
 
   db.init_app(app)
