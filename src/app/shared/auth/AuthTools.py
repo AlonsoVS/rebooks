@@ -25,7 +25,7 @@ def create_token(username:str, password:str):
     token = jwt.encode({
         "username": username,
         "password": password,
-        "exp": datetime.utcnow() + timedelta(minutes = 10),
+        "exp": datetime.utcnow() + timedelta(minutes = 20),
     }, key, algorithm="HS256")
     return token
   return None
@@ -41,5 +41,5 @@ def validate_token(token:str):
     data = jwt.decode(token, key, algorithms="HS256")
     if (validate_auth_data(data)):
       return True
-  finally:
+  except:
     return False

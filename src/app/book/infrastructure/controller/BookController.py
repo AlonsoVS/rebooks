@@ -1,3 +1,4 @@
+from src.app.shared.auth.AuthTools import auth_token_required
 from src.app.book.application.UpdateBookService import UpdateBookService
 from src.app.book.application.CreateBookService import CreateBookService
 from src.app.book.application.DeleteBookService import DeleteBookService
@@ -17,12 +18,14 @@ create_book_service = CreateBookService(book_repository)
 update_book_service = UpdateBookService(book_repository)
 
 class BookResources(Resource):
+  @auth_token_required
   def get(self, book_id:int):
     result = get_books_service.find_by_id(book_id).get_book()
     if result is None:
       return 'Book not found', 404
     return result, 200
-    
+
+  @auth_token_required  
   def delete(self, book_id:int):
     delete_response = delete_book_service.delete(book_id)
     if (delete_response.is_deleted()):
@@ -30,10 +33,12 @@ class BookResources(Resource):
     return 'Book not found', 404
 
 class BookListResources(Resource):
+  @auth_token_required
   def get(self):
     response = get_books_service.get_all()
     return response.get_books(), 200
   
+  @auth_token_required
   def post(self):
     data = request.get_json()
     new_book:Book = book_schema.load(data)
@@ -43,6 +48,7 @@ class BookListResources(Resource):
       return book_created, 201
     return f'Error: Could not create the book', 400
   
+  @auth_token_required
   def put(self):
     update_data = request.get_json()
     update_response = update_book_service.update(update_data)

@@ -1,3 +1,4 @@
+from src.app.shared.auth.AuthTools import auth_token_required
 from src.app.author.application.DeleteAuthorService import DeleteAuthorService
 from src.app.author.application.UpdateAuthorService import UpdateAuthorService
 from src.app.author.application.CreateAuthorService import CreateAuthorService
@@ -17,12 +18,14 @@ update_author_service = UpdateAuthorService(author_repository)
 delete_author_service = DeleteAuthorService(author_repository)
 
 class AuthorResources(Resource):
+  @auth_token_required
   def get(self, author_id:int):
     result = get_books_service.find_by_id(author_id).get_author();
     if result is None:
       return 'Author not found', 404
     return result, 200
   
+  @auth_token_required
   def delete(self, author_id:int):
     delete_response = delete_author_service.delete(author_id)
     if (delete_response.is_deleted()):
@@ -30,10 +33,12 @@ class AuthorResources(Resource):
     return 'Author not found', 404
 
 class AuthorListResources(Resource):
+  @auth_token_required
   def get(self):
     response = get_books_service.get_all()
     return response.get_authors(), 200
   
+  @auth_token_required
   def post(self):
     data = request.get_json()
     new_author:Author = author_schema.load(data)
@@ -43,6 +48,7 @@ class AuthorListResources(Resource):
       return author_created, 201
     return f'Error: Could not create the author', 400
   
+  @auth_token_required
   def put(self):
     update_data = request.get_json()
     update_response = update_author_service.update(update_data)

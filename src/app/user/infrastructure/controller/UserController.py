@@ -1,3 +1,4 @@
+from src.app.shared.auth.AuthTools import auth_token_required
 from src.app.user.application.UpdateUserService import UpdateUserService
 from src.app.user.infrastructure.persistence.UserRepository import UserRepository
 from src.app.user.domain.User import UserSchema
@@ -16,6 +17,7 @@ update_user_service = UpdateUserService(user_repository)
 delete_user_service = DeleteUserService(user_repository)
 
 class UserListResources(Resource):
+  @auth_token_required
   def get(self):
     result = get_user_service.get_all()
     return UserSchema().dump(result.get_users(), many=True), 200
@@ -28,6 +30,7 @@ class UserListResources(Resource):
       return user_created, 201
     return f'Error: Could not create the user', 400
   
+  @auth_token_required
   def put(self):
     update_data = request.get_json()
     update_response = update_user_service.update(update_data)
@@ -37,12 +40,14 @@ class UserListResources(Resource):
     return f'Error: Could not update the user with id: {update_data["id"]}', 400
 
 class UserResource(Resource):
+  @auth_token_required
   def get(self, user_id:int):
     result = get_user_service.find_by_id(user_id).get_user();
     if result is None:
       return 'User not found', 404
     return result, 200
 
+  @auth_token_required
   def delete(self, user_id:int):
     delete_response = delete_user_service.delete(user_id)
     if (delete_response.is_deleted()):

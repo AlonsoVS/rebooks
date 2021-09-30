@@ -1,3 +1,4 @@
+from src.app.shared.auth.AuthTools import auth_token_required
 from src.app.review.application.UpdateReviewService import UpdateReviewService
 from src.app.review.application.DeleteReviewService import DeleteReviewService
 from src.app.review.application.CreateReviewService import CreateReviewService
@@ -17,12 +18,14 @@ delete_review_service = DeleteReviewService(review_repository)
 update_review_service = UpdateReviewService(review_repository)
 
 class ReviewResources(Resource):
+  @auth_token_required
   def get(self, review_id:int):
     result = get_reviews_service.find_by_id(review_id).get_review()
     if result is None:
       return 'Review not found', 404
     return result, 200
 
+  @auth_token_required
   def delete(self, review_id:int):
     delete_response = delete_review_service.delete(review_id)
     if (delete_response.is_deleted()):
@@ -30,10 +33,12 @@ class ReviewResources(Resource):
     return 'Review not found', 404
 
 class ReviewListResources(Resource):
+  @auth_token_required
   def get(self):
     response = get_reviews_service.get_all()
     return response.get_reviews(), 200
   
+  @auth_token_required
   def post(self):
     data = request.get_json()
     new_review:Review = review_schema.load(data)
@@ -43,6 +48,7 @@ class ReviewListResources(Resource):
       return review_created, 201
     return f'Error: Could not create the review', 400
   
+  @auth_token_required
   def put(self):
     update_data = request.get_json()
     update_response = update_review_service.update(update_data)
