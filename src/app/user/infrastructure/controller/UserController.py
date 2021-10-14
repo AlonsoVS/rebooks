@@ -18,10 +18,10 @@ delete_user_service = DeleteUserService(user_repository)
 
 class UserListResources(Resource):
   @auth_token_required
-  def get(self):
+  def get(self, *args, **kwargs):
     result = get_user_service.get_all()
     return UserSchema().dump(result.get_users(), many=True), 200
-  
+
   def post(self):
     data = request.get_json()
     create_response = create_user_service.create(data)
@@ -31,7 +31,7 @@ class UserListResources(Resource):
     return f'Error: Could not create the user', 400
   
   @auth_token_required
-  def put(self):
+  def put(self, *args, **kwargs):
     update_data = request.get_json()
     update_response = update_user_service.update(update_data)
     user_updated = update_response.updated()
@@ -41,17 +41,17 @@ class UserListResources(Resource):
 
 class UserResource(Resource):
   @auth_token_required
-  def get(self, user_id:int):
+  def get(self, user_id:int, *args, **kwargs):
     result = get_user_service.find_by_id(user_id).get_user();
     if result is None:
       return 'User not found', 404
-    return result, 200
+    return UserSchema().dump(result), 200
 
   @auth_token_required
-  def delete(self, user_id:int):
+  def delete(self, user_id: int, *args, **kwargs):
     delete_response = delete_user_service.delete(user_id)
     if (delete_response.is_deleted()):
-      return f'User with id = {user_id} deleted!', 200
+      return f'Deleted user with id: {user_id}!', 200
     return 'User not found!', 200
   
 

@@ -11,11 +11,12 @@ key = 'My-custom-api-key'
 def auth_token_required(func):
   @wraps(func)
   def wrapper(*args, **kwargs):
-    header = request.headers.get('Authorization')
-    if not header:
+    auth_token = request.headers.get('Authorization')
+    if not auth_token:
       return {"message": "Authorization token is missing!"}, 401
-    if (validate_token(header)):
-      return func(*args, **kwargs)
+    if (validate_token(auth_token)):
+      current_user = get_current_user(auth_token)
+      return func(current_user=current_user, *args, **kwargs)
     return {"message": "Authorization Token is invalid!"}, 401
   return wrapper
 
@@ -29,6 +30,9 @@ def create_token(username:str, password:str):
     }, key, algorithm="HS256")
     return token
   return None
+
+def get_current_user(token: str):
+  return jwt.decode(token, key, algorithms="HS256")
 
 def validate_auth_data(data:dict):
   user:User = GetUsersService(UserRepository()).find_by_username(data["username"]).get_user()

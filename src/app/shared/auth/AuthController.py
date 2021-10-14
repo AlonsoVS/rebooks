@@ -18,10 +18,6 @@ class AuthResource(Resource):
         return {"token": token}, 200
       return "Authentication data is invalid!", 400
     return "Login data spected!", 200
-  
-  @auth_token_required
-  def get(self):
-    return "Authorized!", 200  
 
 auth_controller = Blueprint('authentication', __name__)
 api = Api(auth_controller)

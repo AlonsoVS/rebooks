@@ -19,14 +19,14 @@ update_book_service = UpdateBookService(book_repository)
 
 class BookResources(Resource):
   @auth_token_required
-  def get(self, book_id:int):
+  def get(self, book_id:int, *args, **kwargs):
     result = get_books_service.find_by_id(book_id).get_book()
     if result is None:
       return 'Book not found', 404
     return result, 200
 
   @auth_token_required  
-  def delete(self, book_id:int):
+  def delete(self, book_id:int, *args, **kwargs):
     delete_response = delete_book_service.delete(book_id)
     if (delete_response.is_deleted()):
       return f'Deleted book with id: {delete_response.deleted_id()}', 200
@@ -34,12 +34,12 @@ class BookResources(Resource):
 
 class BookListResources(Resource):
   @auth_token_required
-  def get(self):
+  def get(self, *args, **kwargs):
     response = get_books_service.get_all()
     return response.get_books(), 200
   
   @auth_token_required
-  def post(self):
+  def post(self, *args, **kwargs):
     data = request.get_json()
     new_book:Book = book_schema.load(data)
     create_response = create_book_service.create(new_book)
@@ -49,7 +49,7 @@ class BookListResources(Resource):
     return f'Error: Could not create the book', 400
   
   @auth_token_required
-  def put(self):
+  def put(self, *args, **kwargs):
     update_data = request.get_json()
     update_response = update_book_service.update(update_data)
     book_updated = update_response.updated()

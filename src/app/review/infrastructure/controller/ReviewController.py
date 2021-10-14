@@ -19,14 +19,14 @@ update_review_service = UpdateReviewService(review_repository)
 
 class ReviewResources(Resource):
   @auth_token_required
-  def get(self, review_id:int):
+  def get(self, review_id:int, *args, **kwargs):
     result = get_reviews_service.find_by_id(review_id).get_review()
     if result is None:
       return 'Review not found', 404
     return result, 200
 
   @auth_token_required
-  def delete(self, review_id:int):
+  def delete(self, review_id:int, *args, **kwargs):
     delete_response = delete_review_service.delete(review_id)
     if (delete_response.is_deleted()):
       return f'Deleted review with id: {delete_response.deleted_id()}', 200
@@ -34,12 +34,12 @@ class ReviewResources(Resource):
 
 class ReviewListResources(Resource):
   @auth_token_required
-  def get(self):
+  def get(self, *args, **kwargs):
     response = get_reviews_service.get_all()
     return response.get_reviews(), 200
   
   @auth_token_required
-  def post(self):
+  def post(self, *args, **kwargs):
     data = request.get_json()
     new_review:Review = review_schema.load(data)
     create_response = create_review_service.create(new_review)
@@ -49,7 +49,7 @@ class ReviewListResources(Resource):
     return f'Error: Could not create the review', 400
   
   @auth_token_required
-  def put(self):
+  def put(self, *args, **kwargs):
     update_data = request.get_json()
     update_response = update_review_service.update(update_data)
     review_updated = update_response.updated()
